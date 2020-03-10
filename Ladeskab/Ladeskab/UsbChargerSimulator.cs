@@ -29,7 +29,7 @@ namespace UsbSimulator
             Connected = true;
             _overload = false;
 
-            _timer = new System.Timers.Timer();
+            _timer = new Timer();
             _timer.Enabled = false;
             _timer.Interval = CurrentTickInterval;
             _timer.Elapsed += TimerOnElapsed;
