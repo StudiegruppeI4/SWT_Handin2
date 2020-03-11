@@ -36,6 +36,7 @@ namespace Ladeskab
             _door = door;
             _display = display;
             _rfidreader = rfidreader;
+            _door.DoorEvent += DoorStatusChange;
             _rfidreader.RFIDDetectedEvent += RfidDetected;
         }
 
@@ -63,7 +64,6 @@ namespace Ladeskab
                     {
                         _display.Display("Din telefon er ikke ordentlig tilsluttet. Prøv igen.");
                     }
-
                     break;
 
                 case LadeskabState.DoorOpen:
@@ -88,13 +88,74 @@ namespace Ladeskab
                     {
                         _display.Display("Forkert RFID tag");
                     }
-
                     break;
             }
         }
 
-        
+        private void DoorStatusChange(object sender, DoorEventArgs e)
+        {
+            switch (_state)
+            {
+                case LadeskabState.Available:
+                    switch (e.Status)
+                    {
+                        case "Open":
+                            _display.Display("Tilslut telefon");
+                            _state = LadeskabState.DoorOpen;
+                            break;
 
-        // Her mangler de andre trigger handlere
+                        case "Closed":
+                            // Ignore
+                            break;
+
+                        default:
+                            break;
+                    }
+                    break;
+
+                case LadeskabState.DoorOpen:
+                    switch (e.Status)
+                    {
+                        case "Open":
+                            // Ignore
+                            break;
+
+                        case "Closed":
+                            _display.Display("Indlæs RFID");
+                            _state = LadeskabState.Available;
+                            break;
+
+                        default:
+                            break;
+                    }
+                    break;
+
+                case LadeskabState.Locked:
+                    // Ignore
+                    break;
+            }
+        }
+
+        private void CurrentValueChanged(object sender, CurrentEventArgs e)
+        {
+            switch (e.Current)
+            {
+                case 0:
+                    // Ignore
+                    break;
+
+                case double n when (n <= 5 && n > 0):
+                    _display.Display("Phone is fully charged, please disconnect..");
+                    break;
+
+                case double n when (n <= 500 && n > 5):
+                    _display.Display("Phone is charging..");
+                    break;
+
+                case double n when (n > 500):
+                    _display.Display("Something went wrong charging the phone, please disconnect immediately..");
+                    break;
+            }
+        }
     }
 }

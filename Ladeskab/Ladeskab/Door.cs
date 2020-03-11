@@ -8,14 +8,48 @@ namespace Ladeskab
 {
     public class Door : IDoor
     {
-        public void LockDoor()
-        {
-            Console.WriteLine("Locking door..\n");
-        }
-
+        public bool Locked { get; set; } = false;
+        
         public void UnlockDoor()
         {
-            Console.WriteLine("Unlocking door..\n");
+            Console.WriteLine("Stationcontrol unlocking door..");
+            Locked = false;
+        }
+
+        public event EventHandler<DoorEventArgs> DoorEvent; 
+        public void CloseDoor()
+        {
+            if (!Locked)
+            {
+                OnDoorEvent(new DoorEventArgs() { Status = "Closed" });
+            }
+            else
+            {
+                Console.WriteLine("Door is locked, can't close..");
+            }
+        }
+
+        public void OpenDoor()
+        {
+            if (!Locked)
+            {
+                OnDoorEvent(new DoorEventArgs() { Status = "Open" });
+            }
+            else
+            {
+                Console.WriteLine("Door is locked, can't open..");
+            }
+        }
+
+        public void LockDoor()
+        {
+            Console.WriteLine("Stationcontrol locking door..");
+            Locked = true;
+        }
+
+        protected virtual void OnDoorEvent(DoorEventArgs e)
+        {
+            DoorEvent?.Invoke(this, e);
         }
     }
 }
