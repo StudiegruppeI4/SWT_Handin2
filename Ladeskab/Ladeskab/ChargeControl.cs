@@ -2,7 +2,7 @@
 
 namespace Ladeskab
 {
-    public class ChargeControl : IChargeControl
+    public class ChargeControl
     {
         private IUsbCharger _usb;
 
