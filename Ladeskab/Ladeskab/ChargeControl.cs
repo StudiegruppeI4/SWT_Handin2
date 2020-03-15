@@ -1,8 +1,8 @@
-﻿using UsbSimulator;
+﻿using Ladeskab;
 
 namespace Ladeskab
 {
-    public class ChargeControl
+    public class ChargeControl : IChargeControl
     {
         private IUsbCharger _usb;
 
