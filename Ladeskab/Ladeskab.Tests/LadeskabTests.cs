@@ -418,6 +418,7 @@ namespace Ladeskab.Tests
         }
 
         // *** _charger mangler subscription på CurrentValueChanged evented ***
+        // Lav Tests om til TestCases!!
 
         [Test]
         public void CurrentValueEvent_ValueBetweenZeroAndFive()
