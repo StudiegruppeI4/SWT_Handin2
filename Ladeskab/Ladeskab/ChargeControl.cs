@@ -1,4 +1,5 @@
-﻿using Ladeskab;
+﻿using System;
+using Ladeskab;
 
 namespace Ladeskab
 {
@@ -10,6 +11,8 @@ namespace Ladeskab
         {
             _usb = usb;
         }
+
+        public event EventHandler<CurrentEventArgs> CurrentValueEvent;
 
         public void StartCharge()
         {

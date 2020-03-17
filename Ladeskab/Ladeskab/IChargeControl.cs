@@ -8,10 +8,12 @@ namespace Ladeskab
 {
     public interface IChargeControl
     {
-         void StartCharge();
+        event EventHandler<CurrentEventArgs> CurrentValueEvent;
+
+        void StartCharge();
 
 
-         void StopCharge();
+        void StopCharge();
 
 
         bool IsConnected();

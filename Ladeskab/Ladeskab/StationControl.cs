@@ -11,7 +11,7 @@ namespace Ladeskab
     public class StationControl
     {
         // Enum med tilstande ("states") svarende til tilstandsdiagrammet for klassen
-        private enum LadeskabState
+        public enum LadeskabState
         {
             Available,
             Locked,
@@ -28,6 +28,12 @@ namespace Ladeskab
 
         private string logFile = "logfile.txt"; // Navnet på systemets log-fil
 
+        public LadeskabState State
+        {
+            get => _state;
+            private set => _state = value;
+        }
+
         // Her mangler constructor
         public StationControl(IChargeControl charger, IDoor door, IDisplay display, IRFIDReader rfidreader)
         {
@@ -38,6 +44,7 @@ namespace Ladeskab
             _rfidreader = rfidreader;
             _door.DoorEvent += DoorStatusChange;
             _rfidreader.RFIDDetectedEvent += RfidDetected;
+            _charger.CurrentValueEvent += CurrentValueChanged;
         }
 
         // Eksempel på event handler for eventet "RFID Detected" fra tilstandsdiagrammet for klassen
