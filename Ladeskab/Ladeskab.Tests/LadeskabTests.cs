@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -58,24 +59,21 @@ namespace Ladeskab.Tests
 
             _currentEventArgs = null;
             usb.CurrentValueEvent += (o, args) => { _currentEventArgs = args; };
-
         }
 
-        /*
-         ---ToDo----
-         100% coverage
-         Jenkins
-         Journal
+        // Tests for ConcreteDisplay
 
-         Write tests for:
-            states
-            boundary values
-            Equivalance partitions
-            All states
-            All events
+        [Test]
+        public void ConcreteDisplay_DisplayCalled()
+        {
+            StringWriter stringWriter = new StringWriter();
+            Console.SetOut(stringWriter);
 
-         */
+            display.Display("Apache Helicopter");
 
+            string consoleOutput = stringWriter.ToString();
+            Assert.That(consoleOutput, Is.EqualTo("Apache Helicopter\r\n"));
+        }
 
         // Testing door
 
@@ -109,6 +107,15 @@ namespace Ladeskab.Tests
             door.CloseDoor();
             Assert.That(door.Locked);
             Assert.That(_doorEventArgs, Is.EqualTo(null));
+        }
+
+        [Test]
+        public void UnlockDoor_UnlocksLockedDoor()
+        {
+            door.LockDoor();
+            Assert.That(door.Locked);
+            door.UnlockDoor();
+            Assert.That(!door.Locked);
         }
 
         // Testing RFID Reader
@@ -486,6 +493,29 @@ namespace Ladeskab.Tests
         {
             stubCharger.Usb.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 560 });
             stubDisplay.Received(1).Display("Something went wrong charging the phone, please disconnect immediately..");
+        }
+
+        // Tests for ChargeControl
+
+        [Test]
+        public void ChargeControl_StartCharge()
+        {
+            chargeControl.StartCharge();
+            stubUsb.Received(1).StartCharge();
+        }
+
+        [Test]
+        public void ChargeControl_StopCharge()
+        {
+            chargeControl.StopCharge();
+            stubUsb.Received(1).StopCharge();
+        }
+
+        [Test]
+        public void ChargeControl_IsConnectedTrue()
+        {
+            stubUsb.Connected.Returns(true);
+            Assert.That(chargeControl.IsConnected());
         }
     }
 }
