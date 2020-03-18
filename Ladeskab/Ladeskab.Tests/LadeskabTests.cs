@@ -454,6 +454,13 @@ namespace Ladeskab.Tests
         // *** _charger mangler subscription på CurrentValueChanged evented ***
         // Lav Tests om til TestCases!!
 
+        [Test]
+        public void CurrentValueEvent_ValueZero()
+        {
+            stubCharger.Usb.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() {Current = 0});
+            stubDisplay.DidNotReceiveWithAnyArgs().Display("");
+        }
+
         [TestCase(0.1)]
         [TestCase(5)]
         [TestCase(2.5)]
