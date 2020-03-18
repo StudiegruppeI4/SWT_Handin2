@@ -37,7 +37,7 @@ namespace Ladeskab
         // Her mangler constructor
         public StationControl(IChargeControl charger, IDoor door, IDisplay display, IRFIDReader rfidreader)
         {
-            _state = LadeskabState.Available;
+            State = LadeskabState.Available;
             _charger = charger;
             _door = door;
             _display = display;
@@ -50,7 +50,7 @@ namespace Ladeskab
         // Eksempel på event handler for eventet "RFID Detected" fra tilstandsdiagrammet for klassen
         private void RfidDetected(object sender, RFIDEventArgs e)
         {
-            switch (_state)
+            switch (State)
             {
                 case LadeskabState.Available:
                     // Check for ladeforbindelse
@@ -65,7 +65,7 @@ namespace Ladeskab
                         }
 
                         _display.Display("Skabet er låst og din telefon lades. Brug dit RFID tag til at låse op.");
-                        _state = LadeskabState.Locked;
+                        State = LadeskabState.Locked;
                     }
                     else
                     {
@@ -89,7 +89,7 @@ namespace Ladeskab
                         }
 
                         _display.Display("Tag din telefon ud af skabet og luk døren");
-                        _state = LadeskabState.Available;
+                        State = LadeskabState.Available;
                     }
                     else
                     {
@@ -101,14 +101,14 @@ namespace Ladeskab
 
         private void DoorStatusChange(object sender, DoorEventArgs e)
         {
-            switch (_state)
+            switch (State)
             {
                 case LadeskabState.Available:
                     switch (e.Status)
                     {
                         case "Open":
                             _display.Display("Tilslut telefon");
-                            _state = LadeskabState.DoorOpen;
+                            State = LadeskabState.DoorOpen;
                             break;
 
                         case "Closed":
@@ -129,7 +129,7 @@ namespace Ladeskab
 
                         case "Closed":
                             _display.Display("Indlæs RFID");
-                            _state = LadeskabState.Available;
+                            State = LadeskabState.Available;
                             break;
 
                         default:

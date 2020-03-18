@@ -386,6 +386,14 @@ namespace Ladeskab.Tests
         }
 
         [Test]
+        public void RFIDDetectedStateOpenDoor()
+        {
+            stubdoor.DoorEvent += Raise.EventWith(new DoorEventArgs() { Status = "Open" });
+            stubRFIDReader.RFIDDetectedEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 25 });
+            Assert.That(stationControl.State, Is.EqualTo(StationControl.LadeskabState.DoorOpen));
+        }
+
+        [Test]
         public void DoorEventStateAvailable_OpenDoor()
         {
             stubdoor.DoorEvent += Raise.EventWith(new DoorEventArgs() {Status = "Open"});
@@ -415,6 +423,32 @@ namespace Ladeskab.Tests
             stubdoor.DoorEvent += Raise.EventWith(new DoorEventArgs() { Status = "Closed" });
             Assert.That(stationControl.State, Is.EqualTo(StationControl.LadeskabState.Available));
             stubDisplay.Received(1).Display("Indlæs RFID");
+        }
+
+        [Test]
+        public void DoorEventStateDoorOpen_StateAvailable_DefaultSwitchCase()
+        {
+            stubdoor.DoorEvent += Raise.EventWith(new DoorEventArgs() { Status = "Apache Helicopter" });
+            Assert.That(stationControl.State, Is.EqualTo(StationControl.LadeskabState.Available));
+        }
+
+        [Test]
+        public void DoorEventStateDoorOpen_StateDoorOpen_DefaultSwitchCase()
+        {
+            stubdoor.DoorEvent += Raise.EventWith(new DoorEventArgs() { Status = "Open" });
+            stubdoor.DoorEvent += Raise.EventWith(new DoorEventArgs() { Status = "Apache Helicopter" });
+            Assert.That(stationControl.State, Is.EqualTo(StationControl.LadeskabState.DoorOpen));
+        }
+
+        [Test]
+        public void DoorEventStateDoorOpen_StateLocked_DefaultSwitchCase()
+        {
+            // Get Station Controls state to locked first
+            stubCharger.IsConnected().Returns(true);
+            stubRFIDReader.RFIDDetectedEvent += Raise.EventWith(new RFIDEventArgs() { RFID = 30 });
+
+            stubdoor.DoorEvent += Raise.EventWith(new DoorEventArgs() { Status = "Apache Helicopter" });
+            Assert.That(stationControl.State, Is.EqualTo(StationControl.LadeskabState.Locked));
         }
 
         // *** _charger mangler subscription på CurrentValueChanged evented ***
