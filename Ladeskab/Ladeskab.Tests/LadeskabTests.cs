@@ -420,24 +420,30 @@ namespace Ladeskab.Tests
         // *** _charger mangler subscription på CurrentValueChanged evented ***
         // Lav Tests om til TestCases!!
 
-        [Test]
-        public void CurrentValueEvent_ValueBetweenZeroAndFive()
+        [TestCase(0.1)]
+        [TestCase(5)]
+        [TestCase(2.5)]
+        public void CurrentValueEvent_ValueBetweenZeroAndFive(double value)
         {
-            stubUsb.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() {Current = 3});
+            stubCharger.Usb.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() {Current = value});
             stubDisplay.Received(1).Display("Phone is fully charged, please disconnect..");
         }
 
-        [Test]
-        public void CurrentValueEvent_ValueBetweenFiveAndFiveHundred()
+        [TestCase(5.1)]
+        [TestCase(500)]
+        [TestCase(250.8)]
+        public void CurrentValueEvent_ValueBetweenFiveAndFiveHundred(double value)
         {
-            stubUsb.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 230 });
+            stubCharger.Usb.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 230 });
             stubDisplay.Received(1).Display("Phone is charging..");
         }
 
-        [Test]
-        public void CurrentValueEvent_ValueLargerThanFiveHundred()
+        [TestCase(501)]
+        [TestCase(5000)]
+        [TestCase(2500.6)]
+        public void CurrentValueEvent_ValueLargerThanFiveHundred(double value)
         {
-            stubUsb.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 560 });
+            stubCharger.Usb.CurrentValueEvent += Raise.EventWith(new CurrentEventArgs() { Current = 560 });
             stubDisplay.Received(1).Display("Something went wrong charging the phone, please disconnect immediately..");
         }
     }

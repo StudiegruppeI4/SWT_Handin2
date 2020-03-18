@@ -5,28 +5,26 @@ namespace Ladeskab
 {
     public class ChargeControl : IChargeControl
     {
-        private IUsbCharger _usb;
+        public IUsbCharger Usb { get; set; }
 
         public ChargeControl(IUsbCharger usb)
         {
-            _usb = usb;
+            Usb = usb;
         }
-
-        public event EventHandler<CurrentEventArgs> CurrentValueEvent;
 
         public void StartCharge()
         {
-            _usb.StartCharge();
+            Usb.StartCharge();
         }
 
         public void StopCharge()
         {
-            _usb.StopCharge();
+            Usb.StopCharge();
         }
 
         public bool IsConnected()
         {
-            return _usb.Connected;
+            return Usb.Connected;
         }
     }
 }

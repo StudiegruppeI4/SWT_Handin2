@@ -44,7 +44,7 @@ namespace Ladeskab
             _rfidreader = rfidreader;
             _door.DoorEvent += DoorStatusChange;
             _rfidreader.RFIDDetectedEvent += RfidDetected;
-            _charger.CurrentValueEvent += CurrentValueChanged;
+            _charger.Usb.CurrentValueEvent += CurrentValueChanged;
         }
 
         // Eksempel på event handler for eventet "RFID Detected" fra tilstandsdiagrammet for klassen
