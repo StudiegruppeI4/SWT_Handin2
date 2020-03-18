@@ -1,8 +1,9 @@
-﻿using UsbSimulator;
+﻿using System;
+using Ladeskab;
 
 namespace Ladeskab
 {
-    public class ChargeControl
+    public class ChargeControl : IChargeControl
     {
         private IUsbCharger _usb;
 
@@ -10,6 +11,8 @@ namespace Ladeskab
         {
             _usb = usb;
         }
+
+        public event EventHandler<CurrentEventArgs> CurrentValueEvent;
 
         public void StartCharge()
         {

@@ -4,14 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UsbSimulator;
+using Ladeskab;
 
 namespace Ladeskab
 {
     public class StationControl
     {
         // Enum med tilstande ("states") svarende til tilstandsdiagrammet for klassen
-        private enum LadeskabState
+        public enum LadeskabState
         {
             Available,
             Locked,
@@ -20,7 +20,7 @@ namespace Ladeskab
 
         // Her mangler flere member variable
         private LadeskabState _state;
-        private IUsbCharger _charger;
+        private IChargeControl _charger;
         private IDoor _door;
         private IDisplay _display;
         private IRFIDReader _rfidreader;
@@ -28,8 +28,14 @@ namespace Ladeskab
 
         private string logFile = "logfile.txt"; // Navnet på systemets log-fil
 
+        public LadeskabState State
+        {
+            get => _state;
+            private set => _state = value;
+        }
+
         // Her mangler constructor
-        StationControl(IUsbCharger charger, IDoor door, IDisplay display, IRFIDReader rfidreader)
+        public StationControl(IChargeControl charger, IDoor door, IDisplay display, IRFIDReader rfidreader)
         {
             _state = LadeskabState.Available;
             _charger = charger;
@@ -38,6 +44,7 @@ namespace Ladeskab
             _rfidreader = rfidreader;
             _door.DoorEvent += DoorStatusChange;
             _rfidreader.RFIDDetectedEvent += RfidDetected;
+            _charger.CurrentValueEvent += CurrentValueChanged;
         }
 
         // Eksempel på event handler for eventet "RFID Detected" fra tilstandsdiagrammet for klassen
@@ -47,7 +54,7 @@ namespace Ladeskab
             {
                 case LadeskabState.Available:
                     // Check for ladeforbindelse
-                    if (_charger.Connected)
+                    if (_charger.IsConnected())
                     {
                         _door.LockDoor();
                         _charger.StartCharge();
